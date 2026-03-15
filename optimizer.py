@@ -1,51 +1,40 @@
-import numpy as np
-import pandas as pd
-import yfinance as yf
-from scipy.optimize import minimize
+import json
+import os
+import urllib.request
+from dotenv import load_dotenv
 
-def fetch_data(tickers: list, period: str = "2y") -> pd.DataFrame:
-    data = yf.download(tickers, period=period)["Close"]
-    return data.dropna()
+load_dotenv()
+API_KEY = os.getenv("GEMINI_API_KEY")
 
-def compute_stats(prices: pd.DataFrame):
-    returns = prices.pct_change().dropna()
-    mean_returns = returns.mean() * 252
-    cov_matrix = returns.cov() * 252
-    return mean_returns, cov_matrix
+def parse_risk_profile(user_description: str) -> dict:
+    prompt = f"""
+    A user described their investment goals: "{user_description}"
+    
+    Extract and return ONLY a JSON object with:
+    - risk_level: integer 1-10 (1=very conservative, 10=very aggressive)
+    - max_single_stock: float 0-1 (max allocation to one stock)
+    - preferred_sectors: list of sectors they seem to prefer (or empty list)
+    - time_horizon: "short" | "medium" | "long"
+    - summary: one sentence explaining your interpretation
+    
+    Return ONLY valid JSON, no other text.
+    """
 
-def portfolio_performance(weights, mean_returns, cov_matrix):
-    ret = np.dot(weights, mean_returns)
-    vol = np.sqrt(weights.T @ cov_matrix @ weights)
-    sharpe = ret / vol
-    return ret, vol, sharpe
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={API_KEY}"
+    
+    body = json.dumps({
+        "contents": [{"parts": [{"text": prompt}]}]
+    }).encode("utf-8")
 
-def optimize(tickers, risk_level, max_single_stock=0.4):
-    prices = fetch_data(tickers)
-    mean_returns, cov_matrix = compute_stats(prices)
-    n = len(tickers)
-
-    def neg_sharpe(weights):
-        _, _, sharpe = portfolio_performance(weights, mean_returns, cov_matrix)
-        return -sharpe
-
-    constraints = [{"type": "eq", "fun": lambda w: np.sum(w) - 1}]
-    bounds = [(0.01, max_single_stock)] * n
-
-    result = minimize(
-        neg_sharpe,
-        x0=np.array([1/n] * n),
-        method="SLSQP",
-        bounds=bounds,
-        constraints=constraints
+    req = urllib.request.Request(
+        url,
+        data=body,
+        headers={"Content-Type": "application/json"}
     )
-
-    weights = result.x
-    ret, vol, sharpe = portfolio_performance(weights, mean_returns, cov_matrix)
-
-    return {
-        "weights": dict(zip(tickers, weights.round(4))),
-        "expected_return": round(ret * 100, 2),
-        "volatility": round(vol * 100, 2),
-        "sharpe_ratio": round(sharpe, 3),
-        "prices": prices
-    }
+    
+    with urllib.request.urlopen(req) as response:
+        result = json.loads(response.read().decode("utf-8"))
+    
+    raw = result["candidates"][0]["content"]["parts"][0]["text"]
+    clean = raw.replace("```json", "").replace("```", "").strip()
+    return json.loads(clean)

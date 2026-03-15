@@ -13,7 +13,7 @@ col1, col2 = st.columns([2, 1])
 with col1:
     user_input = st.text_area(
         "Describe your investment goals",
-        placeholder="E.g. I am 28, want to retire early, okay with some risk. Interested in tech and clean energy.",
+        placeholder="E.g. I am 28, want to retire early, okay with some risk. Interested in tech.",
         height=120
     )
 
@@ -33,7 +33,7 @@ if st.button("Optimize My Portfolio", type="primary"):
             try:
                 profile = parse_risk_profile(user_input)
             except Exception as e:
-                st.error(f"AI error: {e}. Check your GEMINI_API_KEY in secrets.")
+                st.error(f"AI error: {e}")
                 st.stop()
 
         st.info(f"AI Interpretation: {profile['summary']}")
@@ -47,7 +47,7 @@ if st.button("Optimize My Portfolio", type="primary"):
             try:
                 result = optimize(tickers, profile['risk_level'], profile['max_single_stock'])
             except Exception as e:
-                st.error(f"Optimization error: {e}. Check your stock tickers are valid.")
+                st.error(f"Optimization error: {e}")
                 st.stop()
 
         st.subheader("Optimized Allocation")
@@ -64,27 +64,8 @@ if st.button("Optimize My Portfolio", type="primary"):
 
         st.subheader("Historical Prices 2Y")
         norm_prices = result["prices"] / result["prices"].iloc[0] * 100
-        fig_line = px.line(norm_prices, title="Normalized Price History Base 100")
+        fig_line = px.line(norm_prices, title="Normalized Price History")
         st.plotly_chart(fig_line, use_container_width=True)
 
         st.subheader("Allocation Breakdown")
         st.dataframe(weights_df.sort_values("Weight", ascending=False), use_container_width=True)
-```
-
-7. Scroll down, click **"Commit changes"**
-
----
-
-## Fix requirements.txt directly on GitHub
-
-1. Go back to the repo main page
-2. Click **"Add file"** → **"Create new file"**
-3. Name it exactly `requirements.txt`
-4. Paste this:
-```
-plotly
-pandas
-numpy
-scipy
-yfinance
-python-dotenv

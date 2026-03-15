@@ -63,7 +63,7 @@ if st.button("Optimize My Portfolio", type="primary"):
         m3.metric("Sharpe Ratio", result['sharpe_ratio'])
 
         st.subheader("Historical Prices 2Y")
-        norm_prices = result["prices"] / result["prices"].iloc[0] * 100
+        norm_prices = result["prices"] / result["prices"].dropna().iloc[0] * 100
         fig_line = px.line(norm_prices, title="Normalized Price History")
         st.plotly_chart(fig_line, use_container_width=True)
 

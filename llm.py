@@ -38,12 +38,3 @@ def parse_risk_profile(user_description: str) -> dict:
     raw = result["candidates"][0]["content"]["parts"][0]["text"]
     clean = raw.replace("```json", "").replace("```", "").strip()
     return json.loads(clean)
-```
-
-5. Click **"Commit changes"**
-
----
-
-Also make sure your Gemini key is saved in Streamlit secrets. Go to Streamlit → **Manage app** → **Settings** → **Secrets** and confirm it looks exactly like this:
-```
-GEMINI_API_KEY = "AIzaSyC1kysyWYjUqZviz4QJIxIo1UKLwNEko5o"

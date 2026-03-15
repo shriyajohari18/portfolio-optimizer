@@ -26,10 +26,10 @@ def portfolio_performance(weights, mean_returns, cov_matrix):
 
 def optimize(tickers, risk_level, max_single_stock=0.4):
     prices = fetch_data(tickers)
-    
+
     if prices.shape[1] < 2:
         raise ValueError("Need at least 2 valid tickers with price data.")
-    
+
     mean_returns, cov_matrix = compute_stats(prices)
     n = len(prices.columns)
 
@@ -42,4 +42,20 @@ def optimize(tickers, risk_level, max_single_stock=0.4):
 
     result = minimize(
         neg_sharpe,
-        x0=np.array([1/n] * n
+        x0=np.array([1/n] * n),
+        method="SLSQP",
+        bounds=bounds,
+        constraints=constraints
+    )
+
+    weights = result.x
+    tickers_used = list(prices.columns)
+    ret, vol, sharpe = portfolio_performance(weights, mean_returns, cov_matrix)
+
+    return {
+        "weights": dict(zip(tickers_used, weights.round(4))),
+        "expected_return": round(ret * 100, 2),
+        "volatility": round(vol * 100, 2),
+        "sharpe_ratio": round(sharpe, 3),
+        "prices": prices
+    }

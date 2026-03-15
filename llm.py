@@ -19,7 +19,7 @@ def parse_risk_profile(user_description: str) -> dict:
         "Return ONLY valid JSON, no other text, no markdown, no backticks."
     )
 
-    url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=" + API_KEY
+    url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + API_KEY
 
     body = json.dumps({
         "contents": [{"parts": [{"text": prompt}]}]

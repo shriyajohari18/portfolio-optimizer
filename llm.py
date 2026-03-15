@@ -1,5 +1,6 @@
 import json
 import os
+import time
 import urllib.request
 from dotenv import load_dotenv
 
@@ -21,24 +22,23 @@ def parse_risk_profile(user_description: str) -> dict:
     url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + API_KEY
 
     body = json.dumps({
-        "contents": [
-            {
-                "parts": [
-                    {"text": prompt}
-                ]
-            }
-        ]
+        "contents": [{"parts": [{"text": prompt}]}]
     }).encode("utf-8")
 
-    req = urllib.request.Request(
-        url,
-        data=body,
-        headers={"Content-Type": "application/json"}
-    )
-
-    with urllib.request.urlopen(req) as response:
-        result = json.loads(response.read().decode("utf-8"))
-
-    raw = result["candidates"][0]["content"]["parts"][0]["text"]
-    clean = raw.replace("```json", "").replace("```", "").strip()
-    return json.loads(clean)
+    for attempt in range(3):
+        try:
+            req = urllib.request.Request(
+                url,
+                data=body,
+                headers={"Content-Type": "application/json"}
+            )
+            with urllib.request.urlopen(req) as response:
+                result = json.loads(response.read().decode("utf-8"))
+            raw = result["candidates"][0]["content"]["parts"][0]["text"]
+            clean = raw.replace("```json", "").replace("```", "").strip()
+            return json.loads(clean)
+        except Exception as e:
+            if "429" in str(e) and attempt < 2:
+                time.sleep(10)
+            else:
+                raise e

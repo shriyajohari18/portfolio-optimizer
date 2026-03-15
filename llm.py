@@ -19,7 +19,7 @@ def parse_risk_profile(user_description: str) -> dict:
         "Return ONLY valid JSON, no other text, no markdown, no backticks."
     )
 
-    url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + API_KEY
+    url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + API_KEY
 
     body = json.dumps({
         "contents": [{"parts": [{"text": prompt}]}]
@@ -39,6 +39,6 @@ def parse_risk_profile(user_description: str) -> dict:
             return json.loads(clean)
         except Exception as e:
             if "429" in str(e) and attempt < 2:
-                time.sleep(10)
+                time.sleep(15)
             else:
                 raise e

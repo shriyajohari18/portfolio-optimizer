@@ -4,16 +4,16 @@ import pandas as pd
 from llm import parse_risk_profile
 from optimizer import optimize
 
-st.set_page_config(page_title="AI Portfolio Optimizer", page_icon="📈", layout="wide")
-st.title("📈 AI Portfolio Optimizer")
-st.caption("Describe your goals in plain English — AI handles the rest.")
+st.set_page_config(page_title="AI Portfolio Optimizer", page_icon="chart increasing", layout="wide")
+st.title("AI Portfolio Optimizer")
+st.caption("Describe your goals in plain English - AI handles the rest.")
 
 col1, col2 = st.columns([2, 1])
 
 with col1:
     user_input = st.text_area(
         "Describe your investment goals",
-        placeholder="E.g. I'm 28, want to retire early, okay with some risk but don't want to lose sleep over it. Interested in tech and clean energy.",
+        placeholder="E.g. I'm 28, want to retire early, okay with some risk. Interested in tech and clean energy.",
         height=120
     )
 
@@ -23,7 +23,7 @@ with col2:
         value="AAPL, MSFT, GOOGL, TSLA, NVDA, JPM, V, XOM"
     )
 
-if st.button("⚡ Optimize My Portfolio", type="primary"):
+if st.button("Optimize My Portfolio", type="primary"):
     if not user_input.strip():
         st.warning("Please describe your investment goals first!")
     else:
@@ -36,7 +36,7 @@ if st.button("⚡ Optimize My Portfolio", type="primary"):
                 st.error(f"AI error: {e}. Check your GEMINI_API_KEY in the .env file.")
                 st.stop()
 
-        st.info(f"🤖 **AI Interpretation:** {profile['summary']}")
+        st.info(f"AI Interpretation: {profile['summary']}")
 
         col_a, col_b, col_c = st.columns(3)
         col_a.metric("Risk Level", f"{profile['risk_level']} / 10")
@@ -50,7 +50,7 @@ if st.button("⚡ Optimize My Portfolio", type="primary"):
                 st.error(f"Optimization error: {e}. Check your stock tickers are valid.")
                 st.stop()
 
-        st.subheader("📊 Optimized Allocation")
+        st.subheader("Optimized Allocation")
 
         weights_df = pd.DataFrame(result["weights"].items(), columns=["Stock", "Weight"])
         weights_df["Weight %"] = (weights_df["Weight"] * 100).round(2)
@@ -58,29 +58,14 @@ if st.button("⚡ Optimize My Portfolio", type="primary"):
         st.plotly_chart(fig_pie, use_container_width=True)
 
         m1, m2, m3 = st.columns(3)
-        m1.metric("📈 Expected Annual Return", f"{result['expected_return']}%")
-        m2.metric("📉 Expected Volatility", f"{result['volatility']}%")
-        m3.metric("⚡ Sharpe Ratio", result['sharpe_ratio'])
+        m1.metric("Expected Annual Return", f"{result['expected_return']}%")
+        m2.metric("Expected Volatility", f"{result['volatility']}%")
+        m3.metric("Sharpe Ratio", result['sharpe_ratio'])
 
-        st.subheader("📅 Historical Prices (2Y)")
+        st.subheader("Historical Prices (2Y)")
         norm_prices = result["prices"] / result["prices"].iloc[0] * 100
         fig_line = px.line(norm_prices, title="Normalized Price History (Base = 100)")
         st.plotly_chart(fig_line, use_container_width=True)
 
-        st.subheader("📋 Allocation Breakdown")
+        st.subheader("Allocation Breakdown")
         st.dataframe(weights_df.sort_values("Weight", ascending=False), use_container_width=True)
-```
-
-5. Press `Ctrl + S` to save
-
----
-
-The only things changed from the original are:
-
-- ✅ Added a check so it warns you if you forgot to type your goals
-- ✅ Added proper error messages if the Gemini API key is wrong
-- ✅ Added proper error messages if a stock ticker is invalid
-
-Everything else is identical. Now go to Command Prompt and run:
-```
-streamlit run app.py

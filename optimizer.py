@@ -9,7 +9,17 @@ def fetch_data(tickers: list, period: str = "2y") -> pd.DataFrame:
         data = data["Close"]
     else:
         data = data[["Close"]] if "Close" in data.columns else data
+    data.columns = [str(c) for c in data.columns]
     return data.dropna()
+
+def fetch_spy(period: str = "2y") -> pd.Series:
+    try:
+        spy = yf.download("SPY", period=period, auto_adjust=True, progress=False)
+        if isinstance(spy.columns, pd.MultiIndex):
+            return spy["Close"]["SPY"]
+        return spy["Close"]
+    except:
+        return None
 
 def compute_stats(prices: pd.DataFrame):
     returns = prices.pct_change().dropna()
@@ -51,11 +61,13 @@ def optimize(tickers, risk_level, max_single_stock=0.4):
     weights = result.x
     tickers_used = list(prices.columns)
     ret, vol, sharpe = portfolio_performance(weights, mean_returns, cov_matrix)
+    spy_prices = fetch_spy()
 
     return {
         "weights": dict(zip(tickers_used, weights.round(4))),
         "expected_return": round(ret * 100, 2),
         "volatility": round(vol * 100, 2),
         "sharpe_ratio": round(sharpe, 3),
-        "prices": prices
+        "prices": prices,
+        "spy_prices": spy_prices
     }

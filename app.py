@@ -16,16 +16,59 @@ st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap');
 
-html, body, [data-testid="stAppViewContainer"], .stApp, section.main, .main .block-container {
+/* ── BASE ── */
+html, body, .stApp,
+[data-testid="stAppViewContainer"],
+[data-testid="stAppViewBlockContainer"],
+section.main, .main .block-container,
+[data-testid="stMainBlockContainer"] {
     background-color: #080912 !important;
     font-family: 'DM Sans', sans-serif !important;
     color: #ffffff !important;
 }
-[data-testid="stHeader"], [data-testid="stToolbar"] { display: none !important; }
+[data-testid="stHeader"],
+[data-testid="stToolbar"],
+[data-testid="stDecoration"],
+#MainMenu, footer { display: none !important; }
 [data-testid="stSidebar"] { display: none !important; }
-.block-container { padding: 0 !important; max-width: 100% !important; }
-p, span, div, label { font-family: 'DM Sans', sans-serif !important; }
+.block-container,
+[data-testid="stMainBlockContainer"] {
+    padding: 0 !important;
+    max-width: 100% !important;
+}
 
+/* ── COLUMN BACKGROUNDS ── */
+[data-testid="stColumn"] {
+    background: transparent !important;
+}
+
+/* ── ALL POSSIBLE EXPANDER SELECTORS ── */
+[data-testid="stExpander"],
+[data-testid="stExpander"] > div,
+[data-testid="stExpander"] > div > div,
+details, details > summary,
+.streamlit-expanderHeader,
+.streamlit-expanderContent {
+    background-color: #0f1120 !important;
+    background: #0f1120 !important;
+    border-color: rgba(255,255,255,0.08) !important;
+    color: rgba(255,255,255,0.5) !important;
+}
+[data-testid="stExpander"] {
+    border: 1px solid rgba(255,255,255,0.08) !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+}
+[data-testid="stExpander"] p,
+[data-testid="stExpander"] li,
+[data-testid="stExpander"] strong {
+    color: rgba(255,255,255,0.6) !important;
+}
+[data-testid="stExpander"] summary svg {
+    fill: rgba(255,255,255,0.3) !important;
+}
+
+/* ── INPUTS ── */
 .stTextArea > div > div > textarea {
     background-color: #0f1120 !important;
     border: 1px solid rgba(255,255,255,0.1) !important;
@@ -37,9 +80,10 @@ p, span, div, label { font-family: 'DM Sans', sans-serif !important; }
 }
 .stTextArea > div > div > textarea:focus {
     border-color: rgba(99,102,241,0.6) !important;
-    box-shadow: 0 0 0 3px rgba(99,102,241,0.12) !important;
+    box-shadow: 0 0 0 3px rgba(99,102,241,0.1) !important;
 }
 .stTextArea > div > div > textarea::placeholder { color: rgba(255,255,255,0.2) !important; }
+.stTextArea > div { background: transparent !important; }
 
 .stTextInput > div > div > input {
     background-color: #0f1120 !important;
@@ -52,125 +96,234 @@ p, span, div, label { font-family: 'DM Sans', sans-serif !important; }
 }
 .stTextInput > div > div > input:focus {
     border-color: rgba(99,102,241,0.6) !important;
-    box-shadow: 0 0 0 3px rgba(99,102,241,0.12) !important;
+    box-shadow: 0 0 0 3px rgba(99,102,241,0.1) !important;
 }
 .stTextInput > div > div > input::placeholder { color: rgba(255,255,255,0.2) !important; }
+.stTextInput > div { background: transparent !important; }
+
 .stTextArea label p, .stTextInput label p {
-    color: rgba(255,255,255,0.35) !important;
+    color: rgba(255,255,255,0.3) !important;
     font-size: 10px !important;
     font-weight: 500 !important;
     letter-spacing: 0.18em !important;
     text-transform: uppercase !important;
     margin-bottom: 8px !important;
+    font-family: 'DM Sans', sans-serif !important;
 }
 
+/* ── MAIN BUTTON ── */
 .stButton > button {
     background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
     color: #ffffff !important;
     border: none !important;
     border-radius: 12px !important;
-    padding: 15px 36px !important;
+    padding: 14px 28px !important;
     font-family: 'DM Sans', sans-serif !important;
     font-size: 15px !important;
     font-weight: 500 !important;
     width: 100% !important;
-    box-shadow: 0 4px 24px rgba(99,102,241,0.25) !important;
-    transition: all 0.25s ease !important;
+    box-shadow: 0 4px 20px rgba(99,102,241,0.3) !important;
+    transition: all 0.2s ease !important;
+    letter-spacing: 0.01em !important;
 }
 .stButton > button:hover {
     background: linear-gradient(135deg, #818cf8 0%, #6366f1 100%) !important;
-    transform: translateY(-2px) !important;
-    box-shadow: 0 8px 32px rgba(99,102,241,0.4) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 28px rgba(99,102,241,0.45) !important;
+}
+.stButton > button:active { transform: translateY(0) !important; }
+
+/* ── EXAMPLE BUTTONS — targeted by container class ── */
+.ex-btn-container .stButton > button {
+    background: #0f1120 !important;
+    color: rgba(255,255,255,0.35) !important;
+    border: 1px solid rgba(255,255,255,0.09) !important;
+    border-radius: 8px !important;
+    padding: 8px 14px !important;
+    font-size: 12px !important;
+    font-weight: 400 !important;
+    box-shadow: none !important;
+    letter-spacing: 0 !important;
+}
+.ex-btn-container .stButton > button:hover {
+    background: rgba(99,102,241,0.12) !important;
+    border-color: rgba(99,102,241,0.3) !important;
+    color: #818cf8 !important;
+    transform: none !important;
+    box-shadow: none !important;
 }
 
-[data-testid="stAlert"] { background: rgba(245,158,11,0.07) !important; border: 1px solid rgba(245,158,11,0.25) !important; border-radius: 10px !important; }
-[data-testid="stAlert"] p { color: rgba(245,158,11,0.9) !important; font-size: 13px !important; }
-[data-testid="stInfo"] > div { background: rgba(99,102,241,0.07) !important; border: 1px solid rgba(99,102,241,0.25) !important; border-radius: 10px !important; }
-[data-testid="stSuccess"] > div { background: rgba(16,185,129,0.07) !important; border: 1px solid rgba(16,185,129,0.25) !important; border-radius: 10px !important; }
-[data-testid="stInfo"] p, [data-testid="stSuccess"] p { color: rgba(255,255,255,0.7) !important; font-size: 13px !important; }
+/* ── ALERTS ── */
+[data-testid="stAlert"] {
+    background: rgba(245,158,11,0.07) !important;
+    border: 1px solid rgba(245,158,11,0.2) !important;
+    border-radius: 10px !important;
+}
+[data-testid="stAlert"] p { color: rgba(245,158,11,0.85) !important; font-size: 13px !important; }
+[data-testid="stInfo"] > div {
+    background: rgba(99,102,241,0.07) !important;
+    border: 1px solid rgba(99,102,241,0.2) !important;
+    border-radius: 10px !important;
+}
+[data-testid="stSuccess"] > div {
+    background: rgba(16,185,129,0.07) !important;
+    border: 1px solid rgba(16,185,129,0.2) !important;
+    border-radius: 10px !important;
+}
+[data-testid="stInfo"] p,
+[data-testid="stSuccess"] p { color: rgba(255,255,255,0.65) !important; font-size: 13px !important; }
 
-[data-testid="stExpander"] { background: #0f1120 !important; border: 1px solid rgba(255,255,255,0.07) !important; border-radius: 12px !important; }
-[data-testid="stExpander"] summary p { color: rgba(255,255,255,0.4) !important; font-size: 13px !important; }
-[data-testid="stExpander"] > div > div { color: rgba(255,255,255,0.55) !important; font-size: 13.5px !important; line-height: 1.8 !important; }
+/* ── DIVIDER ── */
+hr {
+    border: none !important;
+    border-top: 1px solid rgba(255,255,255,0.05) !important;
+    margin: 1.5rem 0 !important;
+}
 
-hr { border: none !important; border-top: 1px solid rgba(255,255,255,0.05) !important; margin: 0.5rem 0 1.5rem !important; }
-.stSpinner > div { color: rgba(255,255,255,0.4) !important; }
-.stSpinner > div > div { border-top-color: #6366f1 !important; }
-.stCodeBlock { background: #0f1120 !important; border-radius: 8px !important; }
-.stCodeBlock code { color: rgba(255,255,255,0.45) !important; font-size: 11px !important; }
+/* ── SPINNER ── */
+.stSpinner > div { color: rgba(255,255,255,0.35) !important; }
+[data-testid="stSpinner"] > div > div { border-top-color: #6366f1 !important; }
 
-/* component html styles */
-.eyebrow { font-size: 10.5px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: #6366f1; margin-bottom: 18px; display: flex; align-items: center; gap: 10px; }
-.eyebrow::before { content: ''; width: 28px; height: 1px; background: #6366f1; display: inline-block; }
-.hero-h1 { font-family: 'Syne', sans-serif; font-size: clamp(40px, 5vw, 72px); font-weight: 800; line-height: 1.0; color: #ffffff; margin-bottom: 20px; letter-spacing: -0.03em; }
-.hero-h1 .grad { background: linear-gradient(135deg, #818cf8 0%, #10b981 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-.hero-body { font-size: 16px; font-weight: 300; color: rgba(255,255,255,0.45); max-width: 540px; line-height: 1.75; margin-bottom: 28px; }
-.diff-pill { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.25); border-radius: 100px; font-size: 12px; color: #818cf8; }
-.diff-pill::before { content: '◆'; font-size: 7px; }
-.hero-stats { display: flex; gap: 48px; margin-top: 40px; padding-top: 36px; border-top: 1px solid rgba(255,255,255,0.05); }
-.stat-val { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 700; color: #fff; line-height: 1; }
-.stat-lbl { font-size: 10px; color: rgba(255,255,255,0.28); margin-top: 5px; text-transform: uppercase; letter-spacing: 0.12em; }
-.disc { padding: 12px 18px; background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.2); border-radius: 10px; font-size: 12.5px; color: rgba(245,158,11,0.75); display: flex; gap: 10px; align-items: flex-start; line-height: 1.6; }
-.sec-lbl { font-size: 10px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(255,255,255,0.2); margin-bottom: 5px; }
-.sec-h2 { font-family: 'Syne', sans-serif; font-size: 21px; font-weight: 700; color: #ffffff; margin-bottom: 20px; letter-spacing: -0.02em; }
-.ex-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 12px; }
-.ex-card { padding: 16px 14px; background: rgba(255,255,255,0.025); border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; }
-.ex-tag { font-size: 9.5px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #6366f1; margin-bottom: 7px; }
-.ex-body { font-size: 12.5px; color: rgba(255,255,255,0.38); line-height: 1.55; }
-.profile-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
-.p-card { padding: 20px 16px; background: #0f1120; border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; text-align: center; position: relative; overflow: hidden; }
-.p-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, #6366f1, #10b981); }
-.p-val { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 700; color: #fff; line-height: 1.1; margin-bottom: 6px; }
-.p-lbl { font-size: 10px; color: rgba(255,255,255,0.28); text-transform: uppercase; letter-spacing: 0.12em; }
-.interp { padding: 16px 20px; background: rgba(99,102,241,0.07); border: 1px solid rgba(99,102,241,0.18); border-radius: 12px; font-size: 14px; color: rgba(255,255,255,0.55); line-height: 1.7; margin-top: 16px; }
+/* ── CODE ── */
+.stCodeBlock, [data-testid="stCode"] {
+    background: #0f1120 !important;
+    border: 1px solid rgba(255,255,255,0.07) !important;
+    border-radius: 8px !important;
+}
+.stCodeBlock code { color: rgba(255,255,255,0.4) !important; font-size: 11px !important; }
+
+/* ── COMPONENT STYLES ── */
+.eyebrow {
+    font-size: 10px; font-weight: 500; letter-spacing: 0.22em;
+    text-transform: uppercase; color: #6366f1; margin-bottom: 16px;
+    display: flex; align-items: center; gap: 10px;
+}
+.eyebrow::before { content: ''; width: 24px; height: 1px; background: #6366f1; display: inline-block; }
+.hero-h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(38px, 4.8vw, 68px);
+    font-weight: 800; line-height: 1.02; color: #ffffff;
+    margin-bottom: 20px; letter-spacing: -0.03em;
+}
+.hero-h1 .grad {
+    background: linear-gradient(135deg, #818cf8 0%, #34d399 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.hero-body {
+    font-size: 15.5px; font-weight: 300; color: rgba(255,255,255,0.42);
+    max-width: 500px; line-height: 1.75; margin-bottom: 24px;
+}
+.diff-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 7px 15px; background: rgba(99,102,241,0.08);
+    border: 1px solid rgba(99,102,241,0.22); border-radius: 100px;
+    font-size: 11.5px; color: #818cf8; line-height: 1.4;
+}
+.diff-pill::before { content: '◆'; font-size: 6px; opacity: 0.7; }
+.hero-stats {
+    display: flex; gap: 44px; margin-top: 36px;
+    padding-top: 32px; border-top: 1px solid rgba(255,255,255,0.05);
+}
+.stat-val { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 700; color: #fff; line-height: 1; }
+.stat-lbl { font-size: 9.5px; color: rgba(255,255,255,0.25); margin-top: 5px; text-transform: uppercase; letter-spacing: 0.14em; }
+
+.disc {
+    padding: 12px 16px; background: rgba(245,158,11,0.05);
+    border: 1px solid rgba(245,158,11,0.18); border-radius: 10px;
+    font-size: 12.5px; color: rgba(245,158,11,0.7);
+    display: flex; gap: 10px; align-items: flex-start; line-height: 1.6;
+}
+
+.sec-lbl {
+    font-size: 9.5px; font-weight: 500; letter-spacing: 0.24em;
+    text-transform: uppercase; color: rgba(255,255,255,0.18); margin-bottom: 4px;
+}
+.sec-h2 {
+    font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700;
+    color: #ffffff; margin-bottom: 18px; letter-spacing: -0.02em;
+}
+
+.ex-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 10px; }
+.ex-card {
+    padding: 14px 13px; background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.06); border-radius: 10px;
+}
+.ex-tag { font-size: 9px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #6366f1; margin-bottom: 6px; }
+.ex-body { font-size: 12px; color: rgba(255,255,255,0.32); line-height: 1.55; }
+
+.profile-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
+.p-card {
+    padding: 18px 14px; background: #0d0f1e;
+    border: 1px solid rgba(255,255,255,0.07); border-radius: 12px;
+    text-align: center; position: relative; overflow: hidden;
+}
+.p-card::after {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, #6366f1, #10b981);
+}
+.p-val { font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 700; color: #fff; line-height: 1.1; margin-bottom: 5px; }
+.p-lbl { font-size: 9.5px; color: rgba(255,255,255,0.25); text-transform: uppercase; letter-spacing: 0.12em; }
+
+.interp {
+    padding: 14px 18px; background: rgba(99,102,241,0.06);
+    border: 1px solid rgba(99,102,241,0.15); border-radius: 10px;
+    font-size: 13.5px; color: rgba(255,255,255,0.52); line-height: 1.7; margin-top: 14px;
+}
 .interp b { color: #818cf8; font-weight: 500; }
-.perf-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-.perf-card { padding: 26px 22px; background: #0f1120; border: 1px solid rgba(255,255,255,0.07); border-radius: 16px; }
-.perf-num { font-family: 'Syne', sans-serif; font-size: 44px; font-weight: 800; line-height: 1; letter-spacing: -0.04em; margin-bottom: 4px; }
-.perf-lbl { font-size: 10.5px; color: rgba(255,255,255,0.28); text-transform: uppercase; letter-spacing: 0.14em; margin-bottom: 14px; }
-.perf-out { font-size: 13px; color: rgba(255,255,255,0.48); line-height: 1.65; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.05); }
-.badge { display: inline-block; padding: 4px 12px; border-radius: 100px; font-size: 11px; font-weight: 500; margin-top: 12px; }
-.b-green { background: rgba(16,185,129,0.12); color: #10b981; }
-.b-amber { background: rgba(245,158,11,0.12); color: #f59e0b; }
-.b-red   { background: rgba(239,68,68,0.12);  color: #ef4444; }
+
+.perf-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.perf-card { padding: 24px 20px; background: #0d0f1e; border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; }
+.perf-num { font-family: 'Syne', sans-serif; font-size: 42px; font-weight: 800; line-height: 1; letter-spacing: -0.04em; margin-bottom: 3px; }
+.perf-lbl { font-size: 10px; color: rgba(255,255,255,0.25); text-transform: uppercase; letter-spacing: 0.14em; margin-bottom: 12px; }
+.perf-out { font-size: 12.5px; color: rgba(255,255,255,0.45); line-height: 1.65; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.05); }
+.badge { display: inline-block; padding: 3px 10px; border-radius: 100px; font-size: 10.5px; font-weight: 500; margin-top: 10px; }
+.b-green { background: rgba(16,185,129,0.1); color: #10b981; }
+.b-amber { background: rgba(245,158,11,0.1); color: #f59e0b; }
+.b-red   { background: rgba(239,68,68,0.1);  color: #ef4444; }
+
 .alloc-t { width: 100%; border-collapse: collapse; }
 .alloc-t tr { border-bottom: 1px solid rgba(255,255,255,0.04); }
 .alloc-t tr:last-child { border-bottom: none; }
-.alloc-t td { padding: 12px 0; font-size: 14px; }
-.alloc-t .ticker { font-weight: 500; color: #ffffff; }
-.alloc-t .pct { font-family: 'Syne', sans-serif; font-weight: 600; color: #ffffff; text-align: right; white-space: nowrap; }
-.bar-bg { width: 100%; height: 3px; background: rgba(255,255,255,0.06); border-radius: 2px; margin-top: 5px; }
-.bar-fg { height: 3px; background: linear-gradient(90deg, #6366f1, #10b981); border-radius: 2px; }
-.steps-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
-.step { padding: 18px 14px; background: #0f1120; border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; }
-.step-n { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; color: rgba(99,102,241,0.28); margin-bottom: 8px; line-height: 1; }
-.step-t { font-size: 12px; color: rgba(255,255,255,0.4); line-height: 1.6; }
-.trust-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-.trust-c { padding: 20px 18px; background: #0f1120; border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; }
-.trust-ico { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; margin-bottom: 12px; }
-.trust-h { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 6px; }
-.trust-d { font-size: 12.5px; color: rgba(255,255,255,0.38); line-height: 1.65; }
-.err { padding: 14px 18px; background: rgba(239,68,68,0.07); border: 1px solid rgba(239,68,68,0.2); border-radius: 10px; font-size: 13.5px; color: rgba(239,68,68,0.8); }
-.footer-row { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; padding-top: 28px; border-top: 1px solid rgba(255,255,255,0.05); }
-.ft-brand { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; color: rgba(255,255,255,0.12); }
-.ft-links { display: flex; gap: 20px; }
-.ft-links a { font-size: 12.5px; color: rgba(255,255,255,0.3); text-decoration: none; }
+.alloc-t td { padding: 11px 0; font-size: 13.5px; }
+.alloc-t .ticker { font-weight: 500; color: #fff; }
+.alloc-t .pct { font-family: 'Syne', sans-serif; font-weight: 600; color: #fff; text-align: right; white-space: nowrap; }
+.bar-bg { width: 100%; height: 2px; background: rgba(255,255,255,0.06); border-radius: 2px; margin-top: 5px; }
+.bar-fg { height: 2px; background: linear-gradient(90deg, #6366f1, #10b981); border-radius: 2px; }
+
+.steps-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+.step { padding: 16px 13px; background: #0d0f1e; border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; }
+.step-n { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; color: rgba(99,102,241,0.22); margin-bottom: 7px; line-height: 1; }
+.step-t { font-size: 11.5px; color: rgba(255,255,255,0.38); line-height: 1.6; }
+
+.trust-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.trust-c { padding: 18px 16px; background: #0d0f1e; border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; }
+.trust-ico { width: 30px; height: 30px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; margin-bottom: 10px; }
+.trust-h { font-family: 'Syne', sans-serif; font-size: 13.5px; font-weight: 600; color: #fff; margin-bottom: 5px; }
+.trust-d { font-size: 12px; color: rgba(255,255,255,0.35); line-height: 1.65; }
+
+.err { padding: 13px 16px; background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.18); border-radius: 10px; font-size: 13px; color: rgba(239,68,68,0.75); }
+
+.footer-row {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 20px; flex-wrap: wrap; padding-top: 24px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+}
+.ft-brand { font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 800; color: rgba(255,255,255,0.1); }
+.ft-links { display: flex; gap: 18px; align-items: center; }
+.ft-links a { font-size: 12px; color: rgba(255,255,255,0.28); text-decoration: none; transition: color 0.2s; }
 .ft-links a:hover { color: #818cf8; }
-.ft-legal { font-size: 11px; color: rgba(255,255,255,0.15); text-align: right; line-height: 1.7; }
+.ft-sep { color: rgba(255,255,255,0.1); font-size: 12px; }
+.ft-legal { font-size: 10.5px; color: rgba(255,255,255,0.12); text-align: right; line-height: 1.7; }
 </style>
 """, unsafe_allow_html=True)
 
-# ── PADDING HELPER ──
-# This is the reliable Streamlit way to add side padding.
-# We use a 3-column layout [pad, content, pad] for every section.
-PAD = 0.08  # 8% padding each side
+PAD = 0.07
 
 def padded():
-    """Returns the centre column with padding on both sides."""
     _, col, _ = st.columns([PAD, 1 - 2*PAD, PAD])
     return col
 
-# ── CONSTANTS ──
+# ── DATA ──
 SECTOR_TICKERS = {
     "tech": ["AAPL", "MSFT", "GOOGL", "NVDA", "META"],
     "finance": ["JPM", "BAC", "GS", "V", "MA"],
@@ -245,37 +398,25 @@ def sharpe_info(s):
     return col, badge, out
 
 # ═══════════════════════════════════════
-# HERO — full width, no padding
+# HERO
 # ═══════════════════════════════════════
 st.markdown("""
 <style>
-.hero-bg {
-    background: linear-gradient(180deg, #0d0f1f 0%, #080912 100%);
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-    padding: 64px 0 52px;
-    position: relative;
-    overflow: hidden;
+.hero-strip {
+    background: linear-gradient(175deg, #0e1128 0%, #080912 100%);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    padding: 60px 0 48px;
+    position: relative; overflow: hidden;
 }
-.hero-glow {
-    position: absolute; top: -160px; right: 5%;
-    width: 500px; height: 500px;
-    background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 65%);
-    pointer-events: none;
-}
-.hero-glow2 {
-    position: absolute; bottom: -100px; left: 30%;
-    width: 400px; height: 400px;
-    background: radial-gradient(circle, rgba(16,185,129,0.07) 0%, transparent 65%);
-    pointer-events: none;
-}
+.glow1 { position:absolute; top:-180px; right:0; width:560px; height:560px; background:radial-gradient(circle,rgba(99,102,241,0.13) 0%,transparent 65%); pointer-events:none; }
+.glow2 { position:absolute; bottom:-80px; left:28%; width:440px; height:440px; background:radial-gradient(circle,rgba(16,185,129,0.06) 0%,transparent 65%); pointer-events:none; }
 </style>
-<div class="hero-bg">
-  <div class="hero-glow"></div>
-  <div class="hero-glow2"></div>
+<div class="hero-strip">
+  <div class="glow1"></div>
+  <div class="glow2"></div>
 </div>
 """, unsafe_allow_html=True)
 
-# Hero content inside padded column
 with padded():
     st.markdown("""
     <div class='eyebrow'>AI-Powered Portfolio Optimisation</div>
@@ -290,18 +431,18 @@ with padded():
     </div>
     """, unsafe_allow_html=True)
 
-st.markdown("<div style='height:32px'></div>", unsafe_allow_html=True)
+st.markdown("<div style='height:28px'></div>", unsafe_allow_html=True)
 
 # ── DISCLAIMER ──
 with padded():
     st.markdown("""
     <div class='disc'>
-      <span>⚠</span>
+      <span style='margin-top:1px;flex-shrink:0'>⚠</span>
       <span>This tool is for <strong>educational purposes only</strong> and does not constitute financial advice. Past performance does not guarantee future results. Always consult a qualified financial adviser before investing.</span>
     </div>
     """, unsafe_allow_html=True)
 
-st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)
+st.markdown("<div style='height:16px'></div>", unsafe_allow_html=True)
 
 # ── HOW IT WORKS ──
 with padded():
@@ -319,9 +460,8 @@ with padded():
 **For Indian stocks:** Add .NS to any NSE ticker — e.g. RELIANCE.NS, TCS.NS, HDFCBANK.NS
         """)
 
-st.markdown("<div style='height:12px'></div>", unsafe_allow_html=True)
+st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
 
-# ── DIVIDER ──
 with padded():
     st.markdown("<hr>", unsafe_allow_html=True)
 
@@ -333,26 +473,14 @@ with padded():
         for label, text in EXAMPLES
     ]) + "</div>", unsafe_allow_html=True)
 
+    st.markdown("<div class='ex-btn-container'>", unsafe_allow_html=True)
     ex_cols = st.columns(4, gap="small")
     for i, (label, text) in enumerate(EXAMPLES):
         with ex_cols[i]:
-            st.markdown(f"""
-            <style>
-            div[data-testid="stButton"]:nth-of-type({i+1}) button {{
-                background: transparent !important;
-                color: rgba(255,255,255,0.4) !important;
-                border: 1px solid rgba(255,255,255,0.1) !important;
-                border-radius: 8px !important;
-                padding: 6px 12px !important;
-                font-size: 12px !important;
-                box-shadow: none !important;
-                transform: none !important;
-            }}
-            </style>
-            """, unsafe_allow_html=True)
             if st.button(f"↗ {label}", key=f"ex_{i}"):
                 st.session_state["prefill"] = text
                 st.rerun()
+    st.markdown("</div>", unsafe_allow_html=True)
 
 with padded():
     st.markdown("<hr>", unsafe_allow_html=True)
@@ -374,7 +502,7 @@ with padded():
             "Custom tickers (optional)",
             placeholder="E.g. AAPL, MSFT, RELIANCE.NS"
         )
-        st.markdown("<div style='font-size:12px;color:rgba(255,255,255,0.22);margin-top:8px;line-height:1.7'>Leave blank — AI will suggest stocks based on your goals. Add .NS for Indian NSE stocks.</div>", unsafe_allow_html=True)
+        st.markdown("<div style='font-size:12px;color:rgba(255,255,255,0.2);margin-top:8px;line-height:1.7'>Leave blank — AI will suggest stocks based on your goals. Add .NS for Indian NSE stocks.</div>", unsafe_allow_html=True)
     st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
     run = st.button("Optimise My Portfolio →")
 
@@ -396,7 +524,6 @@ if run:
             except Exception as e:
                 st.markdown(f"<div class='err'>{friendly_error(e)}</div>", unsafe_allow_html=True)
                 st.stop()
-
         tickers = tickers_raw if tickers_raw else suggest_tickers(user_input, profile.get("preferred_sectors", []))
         source = "your custom tickers" if tickers_raw else "AI-selected based on your goals"
         st.info(f"Stocks selected ({source}): **{', '.join(tickers)}**")
@@ -407,10 +534,10 @@ if run:
         sectors_display = ", ".join(profile.get("preferred_sectors", [])) or "Diversified"
         st.markdown(f"""
         <div class='profile-row'>
-          <div class='p-card'><div class='p-val'>{profile['risk_level']}<span style='font-size:14px;color:rgba(255,255,255,0.25)'>/10</span></div><div class='p-lbl'>Risk Level</div></div>
+          <div class='p-card'><div class='p-val'>{profile['risk_level']}<span style='font-size:13px;color:rgba(255,255,255,0.22)'>/10</span></div><div class='p-lbl'>Risk Level</div></div>
           <div class='p-card'><div class='p-val'>{profile['time_horizon'].capitalize()}</div><div class='p-lbl'>Time Horizon</div></div>
-          <div class='p-card'><div class='p-val'>{int(profile['max_single_stock']*100)}<span style='font-size:14px;color:rgba(255,255,255,0.25)'>%</span></div><div class='p-lbl'>Max Per Stock</div></div>
-          <div class='p-card'><div class='p-val' style='font-size:16px'>{sectors_display}</div><div class='p-lbl'>Sectors</div></div>
+          <div class='p-card'><div class='p-val'>{int(profile['max_single_stock']*100)}<span style='font-size:13px;color:rgba(255,255,255,0.22)'>%</span></div><div class='p-lbl'>Max Per Stock</div></div>
+          <div class='p-card'><div class='p-val' style='font-size:15px'>{sectors_display}</div><div class='p-lbl'>Sectors</div></div>
         </div>
         <div class='interp'><b>AI says:</b> {profile['summary']}</div>
         """, unsafe_allow_html=True)
@@ -463,52 +590,52 @@ if run:
                 textinfo="label+percent", textfont=dict(size=12, color="white"),
                 hovertemplate="<b>%{label}</b><br>%{percent}<extra></extra>"
             )])
-            fig_pie.add_annotation(text=f"<b>{len(weights_df)}</b><br>stocks", x=0.5, y=0.5, showarrow=False, font=dict(size=20, color="white", family="Syne"))
-            fig_pie.update_layout(showlegend=False, paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", margin=dict(t=12,b=12,l=12,r=12), font=dict(color="white", family="DM Sans"))
+            fig_pie.add_annotation(text=f"<b>{len(weights_df)}</b><br>stocks", x=0.5, y=0.5, showarrow=False, font=dict(size=19, color="white", family="Syne"))
+            fig_pie.update_layout(showlegend=False, paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", margin=dict(t=8,b=8,l=8,r=8), font=dict(color="white", family="DM Sans"))
             st.plotly_chart(fig_pie, use_container_width=True)
 
         with right:
             rows = "".join([f"""<tr>
               <td class='ticker'>{row['Stock']}</td>
-              <td style='padding:12px 14px'><div class='bar-bg'><div class='bar-fg' style='width:{min(row["Allocation %"],100)}%'></div></div></td>
+              <td style='padding:11px 12px'><div class='bar-bg'><div class='bar-fg' style='width:{min(row["Allocation %"],100)}%'></div></div></td>
               <td class='pct'>{row['Allocation %']}%</td>
             </tr>""" for _, row in weights_df.iterrows()])
             st.markdown(f"<table class='alloc-t'>{rows}</table>", unsafe_allow_html=True)
-            st.markdown("<div style='margin-top:14px;font-size:11px;color:rgba(255,255,255,0.18)'>Allocations optimised to maximise Sharpe Ratio within your risk constraints.</div>", unsafe_allow_html=True)
-            st.markdown("<div style='margin-top:18px;font-size:11px;color:rgba(255,255,255,0.2);margin-bottom:6px'>Share this tool:</div>", unsafe_allow_html=True)
+            st.markdown("<div style='margin-top:12px;font-size:11px;color:rgba(255,255,255,0.15)'>Allocations optimised to maximise Sharpe Ratio within your risk constraints.</div>", unsafe_allow_html=True)
+            st.markdown("<div style='margin-top:16px;font-size:11px;color:rgba(255,255,255,0.18);margin-bottom:5px'>Share this tool:</div>", unsafe_allow_html=True)
             st.code("https://portfolio-optimizer-uihgtnmomrcsl2ptkclwts.streamlit.app", language=None)
 
     with padded():
         st.markdown("<hr>", unsafe_allow_html=True)
         st.markdown("<div class='sec-lbl'>Historical View</div><div class='sec-h2'>2-Year Performance</div>", unsafe_allow_html=True)
-        st.markdown("<div style='font-size:13px;color:rgba(255,255,255,0.28);margin-bottom:16px'>The indigo line is your optimised portfolio. The white dashed line is the S&P 500 benchmark.</div>", unsafe_allow_html=True)
+        st.markdown("<div style='font-size:12.5px;color:rgba(255,255,255,0.25);margin-bottom:14px'>The indigo line is your optimised portfolio. The white dashed line is the S&P 500 benchmark.</div>", unsafe_allow_html=True)
 
         prices = result["prices"]
         norm = prices / prices.dropna().iloc[0] * 100
         fig = go.Figure()
         for col in norm.columns:
             fig.add_trace(go.Scatter(x=norm.index, y=norm[col], name=col, mode="lines",
-                line=dict(width=1, color="rgba(255,255,255,0.1)"), showlegend=False,
+                line=dict(width=1, color="rgba(255,255,255,0.08)"), showlegend=False,
                 hovertemplate=f"<b>{col}</b>: %{{y:.1f}}<extra></extra>"))
         spy_data = result.get("spy_prices")
         if spy_data is not None and not spy_data.empty:
             spy_norm = spy_data / spy_data.dropna().iloc[0] * 100
             fig.add_trace(go.Scatter(x=spy_norm.index, y=spy_norm.values, name="S&P 500", mode="lines",
-                line=dict(color="rgba(255,255,255,0.45)", width=2, dash="dash"),
+                line=dict(color="rgba(255,255,255,0.4)", width=2, dash="dash"),
                 hovertemplate="<b>S&P 500</b>: %{y:.1f}<extra></extra>"))
         weight_series = weights_df.set_index("Stock")["Weight"]
         common = norm.columns.intersection(weight_series.index)
         port_line = (norm[common] * weight_series[common]).sum(axis=1)
         fig.add_trace(go.Scatter(x=port_line.index, y=port_line, name="Your Portfolio", mode="lines",
-            line=dict(color="#6366f1", width=3),
+            line=dict(color="#6366f1", width=2.5),
             hovertemplate="<b>Your Portfolio</b>: %{y:.1f}<extra></extra>"))
         fig.update_layout(
-            paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="#0a0c1a",
-            font=dict(color="rgba(255,255,255,0.4)", family="DM Sans"),
-            xaxis=dict(gridcolor="rgba(255,255,255,0.04)", linecolor="rgba(255,255,255,0.05)", title="Date", tickfont=dict(size=11)),
-            yaxis=dict(gridcolor="rgba(255,255,255,0.04)", linecolor="rgba(255,255,255,0.05)", title="Normalised Value (Base = 100)", tickfont=dict(size=11)),
-            legend=dict(bgcolor="rgba(0,0,0,0)", bordercolor="rgba(255,255,255,0.08)", borderwidth=1, font=dict(size=12)),
-            margin=dict(t=12, b=12, l=8, r=8), hovermode="x unified"
+            paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="#09091a",
+            font=dict(color="rgba(255,255,255,0.35)", family="DM Sans"),
+            xaxis=dict(gridcolor="rgba(255,255,255,0.03)", linecolor="rgba(255,255,255,0.05)", title="Date", tickfont=dict(size=10)),
+            yaxis=dict(gridcolor="rgba(255,255,255,0.03)", linecolor="rgba(255,255,255,0.05)", title="Normalised Value (Base = 100)", tickfont=dict(size=10)),
+            legend=dict(bgcolor="rgba(0,0,0,0)", bordercolor="rgba(255,255,255,0.07)", borderwidth=1, font=dict(size=11)),
+            margin=dict(t=8, b=8, l=4, r=4), hovermode="x unified"
         )
         st.plotly_chart(fig, use_container_width=True)
 
@@ -532,7 +659,7 @@ if run:
         <div class='trust-row'>
           <div class='trust-c'><div class='trust-ico' style='background:rgba(99,102,241,0.1);color:#818cf8'>AI</div><div class='trust-h'>AI Risk Profiling</div><div class='trust-d'>Google Gemini reads your goals and extracts your risk level, time horizon, preferred sectors, and maximum single-stock allocation.</div></div>
           <div class='trust-c'><div class='trust-ico' style='background:rgba(16,185,129,0.1);color:#10b981'>∑</div><div class='trust-h'>Real Market Data</div><div class='trust-d'>Two years of adjusted close prices fetched live from Yahoo Finance for every stock in your portfolio.</div></div>
-          <div class='trust-c'><div class='trust-ico' style='background:rgba(245,158,11,0.1);color:#f59e0b'>◈</div><div class='trust-h'>Mathematical Optimisation</div><div class='trust-d'>Modern Portfolio Theory via SciPy maximises your Sharpe Ratio — risk-adjusted return — within your personal risk constraints.</div></div>
+          <div class='trust-c'><div class='trust-ico' style='background:rgba(245,158,11,0.1);color:#f59e0b'>◈</div><div class='trust-h'>Mathematical Optimisation</div><div class='trust-d'>Modern Portfolio Theory via SciPy maximises your Sharpe Ratio — risk-adjusted return — within your personal constraints.</div></div>
         </div>
         """, unsafe_allow_html=True)
 
@@ -544,9 +671,12 @@ with padded():
       <div class='ft-brand'>Folio AI</div>
       <div class='ft-links'>
         <a href='https://github.com/shriyajohari18/portfolio-optimizer' target='_blank'>GitHub</a>
+        <span class='ft-sep'>·</span>
         <a href='https://www.linkedin.com/in/shriya-johari-807736178/' target='_blank'>LinkedIn</a>
-        <span style='color:rgba(255,255,255,0.18);font-size:12.5px'>Built by Shriya Johari</span>
+        <span class='ft-sep'>·</span>
+        <span style='color:rgba(255,255,255,0.16);font-size:12px'>Built by Shriya Johari</span>
       </div>
       <div class='ft-legal'>Educational purposes only. Not financial advice.<br>Data: Yahoo Finance &nbsp;·&nbsp; AI: Google Gemini &nbsp;·&nbsp; Maths: SciPy MPT</div>
     </div>
+    <div style='height:32px'></div>
     """, unsafe_allow_html=True)

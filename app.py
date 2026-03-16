@@ -129,8 +129,7 @@ def get_return_label(r):
 st.markdown("# Folio AI")
 st.markdown("##### Your personal AI-powered portfolio optimizer. Describe your goals — we handle the math.")
 
-st.warning("This tool is for **educational purposes only** and does not constitute financial advice. Always consult a qualified financial advisor before investing.", icon="!")
-
+st.warning("This tool is for educational purposes only and does not constitute financial advice. Always consult a qualified financial advisor before investing.")
 st.markdown("---")
 
 # ── ONBOARDING ──

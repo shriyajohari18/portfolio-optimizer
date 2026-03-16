@@ -362,7 +362,7 @@ if run:
     <div class='footer'>
         Built by <strong>Shriya Johari</strong> — Product Manager<br>
         <a href='https://github.com/shriyajohari18/portfolio-optimizer' target='_blank'>GitHub</a> &nbsp;|&nbsp;
-        <a href='https://linkedin.com/in/shriyajohari' target='_blank'>LinkedIn</a>
+        <a href='https://www.linkedin.com/in/shriya-johari-807736178/' target='_blank'>LinkedIn</a>
         <br><br>
         This tool is for educational purposes only and does not constitute financial advice.
         Past performance does not guarantee future results.

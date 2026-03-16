@@ -6,8 +6,8 @@ from llm import parse_risk_profile
 from optimizer import optimize
 
 st.set_page_config(
-    page_title="Folio AI - Smart Portfolio Optimizer",
-    page_icon="F",
+    page_title="Folio AI — Smart Portfolio Optimiser",
+    page_icon="📈",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -16,6 +16,28 @@ st.markdown("""
 <style>
     .main { background-color: #0f1117; }
     .block-container { padding-top: 1.5rem; padding-bottom: 2rem; }
+
+    .hero-title {
+        font-size: 3rem;
+        font-weight: 800;
+        color: #ffffff;
+        line-height: 1.2;
+        margin-bottom: 0.5rem;
+    }
+    .hero-sub {
+        font-size: 1.15rem;
+        color: #9ca3af;
+        margin-bottom: 1.5rem;
+    }
+    .hero-diff {
+        font-size: 0.9rem;
+        color: #7c83fd;
+        background: #1a1d2e;
+        border-left: 3px solid #7c83fd;
+        padding: 10px 16px;
+        border-radius: 0 8px 8px 0;
+        margin-bottom: 1.5rem;
+    }
     .metric-card {
         background: linear-gradient(135deg, #1e2130, #2d3250);
         border-radius: 12px;
@@ -23,6 +45,7 @@ st.markdown("""
         border: 1px solid #3d4270;
         text-align: center;
         height: 100%;
+        margin-bottom: 8px;
     }
     .metric-value {
         font-size: 1.8rem;
@@ -34,11 +57,47 @@ st.markdown("""
         color: #9ca3af;
         margin-top: 4px;
     }
-    .metric-explain {
-        font-size: 0.75rem;
+    .metric-outcome {
+        font-size: 0.78rem;
         color: #6ee7b7;
-        margin-top: 8px;
-        font-style: italic;
+        margin-top: 10px;
+        padding: 6px 10px;
+        background: rgba(110,231,183,0.08);
+        border-radius: 6px;
+        line-height: 1.4;
+    }
+    .next-steps {
+        background: #1e2130;
+        border-radius: 12px;
+        padding: 20px 24px;
+        border: 1px solid #3d4270;
+        margin-top: 16px;
+    }
+    .next-steps h4 {
+        color: #ffffff;
+        margin-bottom: 12px;
+        font-size: 1rem;
+    }
+    .next-step-item {
+        color: #9ca3af;
+        font-size: 0.88rem;
+        padding: 6px 0;
+        border-bottom: 1px solid #2d3250;
+    }
+    .trust-box {
+        background: #1a1d2e;
+        border-radius: 12px;
+        padding: 20px 24px;
+        border: 1px solid #2d3250;
+        margin-top: 16px;
+    }
+    .trust-box h4 { color: #ffffff; font-size: 1rem; margin-bottom: 12px; }
+    .trust-item {
+        color: #9ca3af;
+        font-size: 0.85rem;
+        padding: 5px 0;
+        display: flex;
+        gap: 10px;
     }
     .stButton > button {
         background: linear-gradient(135deg, #667eea, #764ba2);
@@ -51,27 +110,33 @@ st.markdown("""
         width: 100%;
     }
     .stButton > button:hover { opacity: 0.85; }
-    .example-chip {
-        background: #1e2130;
-        border: 1px solid #3d4270;
-        border-radius: 20px;
-        padding: 6px 14px;
-        font-size: 0.8rem;
-        color: #9ca3af;
-        display: inline-block;
-        margin: 4px;
-        cursor: pointer;
-    }
     .footer {
         text-align: center;
-        padding: 24px 0 8px 0;
+        padding: 28px 0 8px 0;
         color: #4b5563;
         font-size: 0.82rem;
         border-top: 1px solid #1e2130;
-        margin-top: 40px;
+        margin-top: 48px;
     }
     .footer a { color: #7c83fd; text-decoration: none; }
-    h1, h2, h3 { color: #ffffff; }
+    .error-box {
+        background: #2d1f1f;
+        border: 1px solid #7f1d1d;
+        border-radius: 8px;
+        padding: 14px 18px;
+        color: #fca5a5;
+        font-size: 0.9rem;
+        margin: 8px 0;
+    }
+    .mobile-note {
+        background: #1e2130;
+        border: 1px solid #3d4270;
+        border-radius: 8px;
+        padding: 10px 16px;
+        color: #9ca3af;
+        font-size: 0.82rem;
+        text-align: center;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -87,11 +152,19 @@ SECTOR_TICKERS = {
 }
 
 EXAMPLES = [
-    "I am 25, just started working, want high growth for retirement in 30 years. Love tech.",
-    "I am 40, moderate risk, interested in healthcare and consumer stocks for 10 years.",
-    "I am 60, retiring soon, want very safe investments with low volatility.",
-    "I am 30, interested in clean energy and ESG stocks, medium risk tolerance."
+    "I am 25, just started working, want high growth over 30 years. I love tech stocks and can handle high risk.",
+    "I am 40, moderate risk, interested in healthcare and consumer stocks for the next 10 years.",
+    "I am 60, retiring soon, want very safe low-volatility investments to preserve my wealth.",
+    "I am 30, passionate about clean energy and ESG investing, medium risk tolerance, 15-year horizon."
 ]
+
+ERROR_MESSAGES = {
+    "429": "Our AI is taking a short break due to high demand. Please wait 30 seconds and try again.",
+    "403": "There was an authentication issue with our AI service. Please try again shortly.",
+    "404": "We could not reach our AI service. Please try again in a moment.",
+    "400": "We had trouble understanding your request. Please try rephrasing your goals.",
+    "default": "Something went wrong. Please try again — if the problem persists, try refreshing the page."
+}
 
 def suggest_tickers(user_text, preferred_sectors):
     tickers = set()
@@ -107,90 +180,127 @@ def suggest_tickers(user_text, preferred_sectors):
         tickers.update(SECTOR_TICKERS["default"])
     return list(tickers)[:10]
 
-def get_sharpe_label(s):
-    if s >= 2: return "Excellent risk-adjusted return"
-    if s >= 1: return "Good risk-adjusted return"
-    if s >= 0.5: return "Moderate risk-adjusted return"
-    return "Below average — consider diversifying more"
+def friendly_error(e):
+    msg = str(e)
+    for code, friendly in ERROR_MESSAGES.items():
+        if code in msg:
+            return friendly
+    return ERROR_MESSAGES["default"]
 
-def get_volatility_label(v):
-    if v < 10: return "Low — small price swings expected"
-    if v < 20: return "Moderate — portfolio may swing up or down by this % per year"
-    if v < 30: return "High — expect significant price swings"
-    return "Very high — this portfolio carries substantial risk"
+def get_sharpe_outcome(s):
+    if s >= 2: return "Excellent. For every unit of risk you take on, you earn 2+ units of return."
+    if s >= 1: return "Good. You are being well-rewarded relative to the risk you are taking."
+    if s >= 0.5: return "Moderate. Your returns are reasonable but there may be better allocations."
+    return "Below average. Consider diversifying into less correlated assets."
 
-def get_return_label(r):
-    if r > 15: return "Strong — well above the ~10% historical S&P 500 average"
-    if r > 10: return "Good — above the ~10% historical S&P 500 average"
-    if r > 5: return "Moderate — below market average but positive"
-    return "Low — consider a higher-risk allocation for better growth"
+def get_volatility_outcome(v):
+    if v < 10: return f"Low risk. In a difficult year, your portfolio could fall by roughly {v:.0f}%."
+    if v < 20: return f"Moderate risk. Your portfolio could swing up or down by about {v:.0f}% in any given year."
+    if v < 30: return f"High risk. Expect significant price movements — up to {v:.0f}% in either direction annually."
+    return f"Very high risk. This portfolio could move by {v:.0f}% or more in a year. Only suitable for aggressive investors."
 
-# ── HEADER ──
-st.markdown("# Folio AI")
-st.markdown("##### Your personal AI-powered portfolio optimizer. Describe your goals — we handle the math.")
+def get_return_outcome(r):
+    diff = r - 10
+    direction = "above" if diff >= 0 else "below"
+    if r > 15: return f"Strong. This is {abs(diff):.1f}% {direction} the historical S&P 500 average of ~10% per year."
+    if r > 10: return f"Good. This is {abs(diff):.1f}% {direction} the historical S&P 500 average of ~10% per year."
+    if r > 5: return f"Moderate. This is {abs(diff):.1f}% {direction} the historical S&P 500 average. Consider a higher-risk allocation."
+    return "Low. This portfolio may not keep pace with inflation. Consider adjusting your risk level."
 
-st.warning("This tool is for educational purposes only and does not constitute financial advice. Always consult a qualified financial advisor before investing.")
+# ── HERO SECTION ──
+st.markdown("""
+<div class='hero-title'>Folio AI</div>
+<div class='hero-sub'>Tell us your goals. We build your perfect investment portfolio in under 60 seconds.</div>
+<div class='hero-diff'>Unlike generic AI chatbots, Folio AI uses real historical market data and mathematical optimisation — not guesswork.</div>
+""", unsafe_allow_html=True)
+
+st.markdown("""
+<div class='mobile-note'>
+For the best experience, please open this on a desktop or laptop browser.
+</div>
+""", unsafe_allow_html=True)
+
+st.markdown("")
+
+st.warning("This tool is for educational purposes only and does not constitute financial advice. Past performance does not guarantee future results. Always consult a qualified financial adviser before investing.")
+
 st.markdown("---")
 
-# ── ONBOARDING ──
-with st.expander("How does this work? (click to learn)", expanded=False):
+# ── HOW IT WORKS ──
+with st.expander("How does Folio AI work?", expanded=False):
     st.markdown("""
-    **3 simple steps:**
-    1. Describe your investment goals in plain English below — your age, risk appetite, time horizon and interests
-    2. Optionally add your own stock tickers, or let AI suggest them based on your goals
-    3. Click Optimize — we run Modern Portfolio Theory math on real market data to find your ideal allocation
+    **Three simple steps:**
 
-    **What you get:**
-    - A personalized risk profile based on your goals
-    - An optimized portfolio with exact % allocations
-    - Expected annual return, volatility and Sharpe Ratio
-    - 2 years of historical performance vs the S&P 500
+    1. **Describe your goals** in plain English — your age, how long you want to invest, how much risk you can stomach, and any sectors you find interesting.
+    2. **We select stocks** automatically based on your goals, or you can enter your own tickers.
+    3. **We optimise your portfolio** using Modern Portfolio Theory — the same mathematical framework used by professional fund managers.
+
+    **What you receive:**
+    - A personalised risk profile based on your goals
+    - An optimised portfolio with exact percentage allocations
+    - Plain English explanations of every metric
+    - Two years of historical performance compared to the S&P 500
+
+    **How we calculate this:**
+    - We fetch two years of real adjusted close price data from Yahoo Finance
+    - We calculate annualised returns and volatility for each stock
+    - We use a Sharpe Ratio maximisation algorithm (SciPy SLSQP) to find the optimal allocation
+    - We use Google Gemini AI to understand your goals and extract your risk profile
+
+    **Limitations to be aware of:**
+    - This tool uses historical data — past performance does not guarantee future returns
+    - The optimisation is based on the stocks you select, not the entire market
+    - This is an educational tool, not regulated financial advice
     """)
 
+st.markdown("---")
+
 # ── EXAMPLE PROMPTS ──
-st.markdown("**Try an example:**")
-cols = st.columns(4)
+st.markdown("**Try an example to get started:**")
+ex_cols = st.columns(4)
 for i, example in enumerate(EXAMPLES):
-    with cols[i]:
-        if st.button(f"Example {i+1}", key=f"ex_{i}"):
+    with ex_cols[i]:
+        label = ["Young & Ambitious", "Mid-Career", "Near Retirement", "ESG Investor"][i]
+        if st.button(label, key=f"ex_{i}"):
             st.session_state["prefill"] = example
 
-# ── INPUTS ──
 st.markdown("---")
-col1, col2 = st.columns([2, 1])
 
+# ── INPUTS ──
+col1, col2 = st.columns([2, 1])
 prefill = st.session_state.get("prefill", "")
 
 with col1:
     user_input = st.text_area(
         "Describe your investment goals",
         value=prefill,
-        placeholder="E.g. I am 28, want to grow wealth for a house deposit in 5 years. I can handle moderate risk and I like tech and clean energy stocks.",
+        placeholder="E.g. I am 28, want to build wealth for a house deposit in 5 years. I can handle moderate risk and I am interested in tech and clean energy stocks.",
         height=130
     )
+
 with col2:
     st.markdown("**Stocks to consider (optional)**")
-    st.caption("Leave blank to let AI pick based on your goals. Add .NS for Indian stocks e.g. RELIANCE.NS")
+    st.caption("Leave blank and AI will suggest stocks based on your goals. For Indian stocks, add .NS — e.g. RELIANCE.NS, TCS.NS")
     ticker_input = st.text_input(
         "Custom tickers",
-        placeholder="E.g. AAPL, MSFT, TSLA or RELIANCE.NS, TCS.NS"
+        placeholder="E.g. AAPL, MSFT, TSLA"
     )
 
-run = st.button("Optimize My Portfolio")
+run = st.button("Optimise My Portfolio")
 
 # ── MAIN LOGIC ──
 if run:
     if not user_input.strip():
-        st.warning("Please describe your investment goals first!")
+        st.warning("Please describe your investment goals first.")
         st.stop()
 
     tickers_raw = [t.strip().upper() for t in ticker_input.split(",") if t.strip()]
 
-    with st.spinner("Step 1 of 3 — Analyzing your goals with AI..."):
+    with st.spinner("Step 1 of 3 — Reading your goals and building your risk profile..."):
         try:
             profile = parse_risk_profile(user_input)
         except Exception as e:
-            st.error(f"AI error: {e}. Please try again in a moment.")
+            st.markdown(f"<div class='error-box'>{friendly_error(e)}</div>", unsafe_allow_html=True)
             st.stop()
 
     if tickers_raw:
@@ -228,37 +338,42 @@ if run:
 
     st.success(f"AI Interpretation: {profile['summary']}")
 
-    with st.spinner("Step 2 of 3 — Fetching live market data for all stocks..."):
+    with st.spinner("Step 2 of 3 — Fetching two years of live market data for all stocks..."):
         pass
 
-    with st.spinner("Step 3 of 3 — Running portfolio optimization across thousands of combinations..."):
+    with st.spinner("Step 3 of 3 — Running optimisation across thousands of portfolio combinations..."):
         try:
             result = optimize(tickers, profile['risk_level'], profile['max_single_stock'])
         except Exception as e:
-            st.error(f"Optimization error: {e}. Please check your tickers are valid and try again.")
+            err = str(e)
+            if "valid ticker" in err.lower() or "2 valid" in err.lower():
+                st.markdown("<div class='error-box'>We could not find enough valid stock data. Please check your tickers are correct and try again. Make sure Indian stocks include .NS (e.g. RELIANCE.NS).</div>", unsafe_allow_html=True)
+            else:
+                st.markdown(f"<div class='error-box'>Optimisation error: {err}. Please check your tickers are valid and try again.</div>", unsafe_allow_html=True)
             st.stop()
 
     st.markdown("---")
     st.markdown("### Portfolio Performance")
+    st.caption("Here is what these numbers mean for you in plain English.")
 
     p1, p2, p3 = st.columns(3)
     with p1:
         st.markdown(f"""<div class='metric-card'>
             <div class='metric-value'>{result['expected_return']}%</div>
             <div class='metric-label'>Expected Annual Return</div>
-            <div class='metric-explain'>{get_return_label(result['expected_return'])}</div>
+            <div class='metric-outcome'>{get_return_outcome(result['expected_return'])}</div>
         </div>""", unsafe_allow_html=True)
     with p2:
         st.markdown(f"""<div class='metric-card'>
             <div class='metric-value'>{result['volatility']}%</div>
             <div class='metric-label'>Expected Volatility</div>
-            <div class='metric-explain'>{get_volatility_label(result['volatility'])}</div>
+            <div class='metric-outcome'>{get_volatility_outcome(result['volatility'])}</div>
         </div>""", unsafe_allow_html=True)
     with p3:
         st.markdown(f"""<div class='metric-card'>
             <div class='metric-value'>{result['sharpe_ratio']}</div>
             <div class='metric-label'>Sharpe Ratio</div>
-            <div class='metric-explain'>{get_sharpe_label(result['sharpe_ratio'])}</div>
+            <div class='metric-outcome'>{get_sharpe_outcome(result['sharpe_ratio'])}</div>
         </div>""", unsafe_allow_html=True)
 
     st.markdown("---")
@@ -296,10 +411,15 @@ if run:
             use_container_width=True,
             hide_index=True
         )
-        st.caption("Suggested allocation based on Sharpe Ratio maximization")
+        st.caption("Allocations calculated to maximise risk-adjusted return (Sharpe Ratio) within your risk constraints.")
+
+        portfolio_url = f"https://portfolio-optimizer-uihgtnmomrcsl2ptkclwts.streamlit.app"
+        st.markdown(f"**Share this tool:**")
+        st.code(portfolio_url, language=None)
 
     st.markdown("---")
     st.markdown("### Historical Performance (2 Years)")
+    st.caption("See how these stocks performed historically. The purple line shows your optimised portfolio. The white dashed line is the S&P 500 benchmark.")
 
     prices = result["prices"]
     norm = prices / prices.dropna().iloc[0] * 100
@@ -309,7 +429,7 @@ if run:
         fig_line.add_trace(go.Scatter(
             x=norm.index, y=norm[col],
             name=col, mode="lines",
-            line=dict(width=1.5), opacity=0.6
+            line=dict(width=1.5), opacity=0.5
         ))
 
     spy_data = result.get("spy_prices")
@@ -337,33 +457,52 @@ if run:
         plot_bgcolor="rgba(14,17,23,0.8)",
         font=dict(color="white"),
         xaxis=dict(gridcolor="#2d3250", title="Date"),
-        yaxis=dict(gridcolor="#2d3250", title="Normalized Value (Base = 100)"),
+        yaxis=dict(gridcolor="#2d3250", title="Normalised Value (Base = 100)"),
         legend=dict(bgcolor="rgba(0,0,0,0)"),
         margin=dict(t=20)
     )
     st.plotly_chart(fig_line, use_container_width=True)
-    st.caption("White dashed line = S&P 500 benchmark. Purple line = your optimized portfolio.")
 
     st.markdown("---")
-    st.markdown("### Was this helpful?")
-    fb1, fb2, fb3 = st.columns([1, 1, 4])
+    st.markdown("### What to do next")
+    st.markdown("""
+    <div class='next-steps'>
+        <h4>Suggested next steps</h4>
+        <div class='next-step-item'>1. Screenshot or note down your allocation percentages above</div>
+        <div class='next-step-item'>2. Open your brokerage account (e.g. Freetrade, Trading 212, Hargreaves Lansdown)</div>
+        <div class='next-step-item'>3. Search for each stock ticker and invest your chosen amount in the suggested proportions</div>
+        <div class='next-step-item'>4. Review and rebalance your portfolio every 6 to 12 months</div>
+        <div class='next-step-item'>5. Try adjusting your risk level or time horizon to see different allocations</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("---")
+    st.markdown("### Was this useful?")
+    st.caption("Your feedback helps us improve Folio AI.")
+    fb1, fb2 = st.columns([1, 1])
     with fb1:
-        if st.button("👍 Yes, loved it"):
-            st.success("Thank you for your feedback!")
+        if st.button("Yes, this was helpful"):
+            st.success("Thank you — we are glad it was useful!")
     with fb2:
-        if st.button("👎 Needs work"):
-            feedback = st.text_input("What could be better?", key="feedback_text")
+        if st.button("No, something needs improving"):
+            feedback = st.text_area("What could be better? We read every response.", key="feedback_text", height=80)
             if feedback:
-                st.success("Thank you! We will use this to improve.")
+                st.success("Thank you for your feedback. We will review it shortly.")
 
     st.markdown("---")
     st.markdown("""
     <div class='footer'>
+        <strong style='color:#7c83fd; font-size:1rem;'>Folio AI</strong><br><br>
         Built by <strong>Shriya Johari</strong> — Product Manager<br>
-        <a href='https://github.com/shriyajohari18/portfolio-optimizer' target='_blank'>GitHub</a> &nbsp;|&nbsp;
+        <a href='https://github.com/shriyajohari18/portfolio-optimizer' target='_blank'>GitHub</a>
+        &nbsp;|&nbsp;
         <a href='https://www.linkedin.com/in/shriya-johari-807736178/' target='_blank'>LinkedIn</a>
         <br><br>
-        This tool is for educational purposes only and does not constitute financial advice.
-        Past performance does not guarantee future results.
+        This tool is for educational purposes only and does not constitute financial advice.<br>
+        Past performance does not guarantee future results.<br>
+        Always consult a qualified financial adviser before making investment decisions.
+        <br><br>
+        Data sourced from Yahoo Finance. AI powered by Google Gemini.
+        Optimisation engine built with SciPy and Modern Portfolio Theory.
     </div>
     """, unsafe_allow_html=True)
